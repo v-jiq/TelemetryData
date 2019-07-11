@@ -42,9 +42,7 @@ int main(void)
     EVENT_INSTANCE messages[MESSAGE_COUNT];
 
     srand((unsigned int)time(NULL));
-    double avgWindSpeed = 10.0;
     double minTemperature = 20.0;
-    double minHumidity = 60.0;
 
     callbackCounter = 0;
 
@@ -65,7 +63,6 @@ int main(void)
 
         size_t iterator = 0;
         double temperature = 0;
-        double humidity = 0;
         do
         {
             //if (iterator < MESSAGE_COUNT)
@@ -74,7 +71,6 @@ int main(void)
                         iterator = 0;
 
                 temperature = minTemperature + (rand() % 10);
-                humidity = minHumidity +  (rand() % 20);
                 sprintf_s(msgText, sizeof(msgText), "{\"machine\":{\"temperature\":%.2f},\"timeCreated\":\"2019-06-27T08:03:52.6468048Z\"}",temperature+10);
 
                 if ((messages[iterator].messageHandle = IoTHubMessage_CreateFromString(msgText)) == NULL)
