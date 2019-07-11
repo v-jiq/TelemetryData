@@ -17,10 +17,9 @@
 static int callbackCounter;
 static char msgText[1024];
 static char propText[1024];
-//#define MESSAGE_COUNT 500
-#define MESSAGE_COUNT 100
-#define DOWORK_LOOP_NUM     60
 
+#define MESSAGE_COUNT 500
+#define DOWORK_LOOP_NUM     60
 
 typedef struct EVENT_INSTANCE_TAG
 {
@@ -31,7 +30,7 @@ typedef struct EVENT_INSTANCE_TAG
 static void SendConfirmationCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result, void* userContextCallback)
 {
     EVENT_INSTANCE* eventInstance = (EVENT_INSTANCE*)userContextCallback;
-    (void)printf("Confirmation[%d] received for message tracking id = %lu with result = %s\r\n", callbackCounter, (unsigned long)eventInstance->messageTrackingId, MU_ENUM_TO_STRING(IOTHUB_CLIENT_CONFIRMATION_RESULT, result));
+    (void)printf("Confirmation[%d] received for message tracking id = %lu with result = %s\r\n", callbackCounter, (unsigned long)eventInstance->messageTrackingId, ENUM_TO_STRING(IOTHUB_CLIENT_CONFIRMATION_RESULT, result));
     /* Some device specific action code goes here... */
     callbackCounter++;
     IoTHubMessage_Destroy(eventInstance->messageHandle);
@@ -69,14 +68,15 @@ int main(void)
         double humidity = 0;
         do
         {
-            if (iterator < MESSAGE_COUNT)
+            //if (iterator < MESSAGE_COUNT)
             {
+                if (iterator == MESSAGE_COUNT)
+                        iterator = 0;
+
                 temperature = minTemperature + (rand() % 10);
                 humidity = minHumidity +  (rand() % 20);
-                sprintf_s(msgText, sizeof(msgText), "{\"deviceId\":\"myFirstDevice\",\"windSpeed\":%.2f,\"machine\":{\"temperature\":%.2f},\"humidity\":%.2f,\"timeCreated\":\"2019-06-27T08:03:52.6468048Z\"}", avgWindSpeed + (rand() % 4 + 2), temperature+10, humidity);
-                //sprintf_s(msgText, sizeof(msgText), "{\"machine\":{\"temperature\":33.599776815320254,\"pressure\":2.4354176118719275},\"timeCreated\":\"2019-06-27T08:03:52.6468048Z\"}");
-                //sprintf_s(msgText, sizeof(msgText), "{\"machine\":{\"temperature\":33.599776815320254},\"timeCreated\":\"2019-06-27T08:03:52.6468048Z\"}");
-                //sprintf_s(msgText, sizeof(msgText), "{\"temperature\":33.599776815320254,\"timeCreated\":\"2019-06-27T08:03:52.6468048Z\"}"); //can't
+                sprintf_s(msgText, sizeof(msgText), "{\"machine\":{\"temperature\":%.2f},\"timeCreated\":\"2019-06-27T08:03:52.6468048Z\"}",temperature+10);
+
                 if ((messages[iterator].messageHandle = IoTHubMessage_CreateFromString(msgText)) == NULL)
                 {
                     (void)printf("ERROR: iotHubMessageHandle is NULL!\r\n");
